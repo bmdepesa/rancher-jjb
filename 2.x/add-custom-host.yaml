@@ -1,0 +1,55 @@
+- job:
+    name: rancher-v3_add_custom_host
+    description: 'Do not edit this job manually! '
+    project-type: pipeline
+    concurrent: true
+    properties: 
+      - inject:
+          keep-system-variables: true
+          keep-build-variables: true
+      - build-discarder:
+          num-to-keep: 10
+    pipeline-scm:
+      scm:
+        - git:
+            url: https://github.com/rancher/rancher
+            branches: 
+              - master
+      script-path: tests/validation/tests/v3_api/Jenkinsfile
+      lightweight-checkout: true
+    parameters:
+      - string:
+          name: BRANCH
+          default: master
+          description: |
+            use "master" when testing Rancher v2.2 and plus
+            use "release/v2.1" when testing Rancher v2.0 and v2.1
+      - string:
+          name: DEBUG
+          default: True
+      - string: 
+          name: PYTEST_OPTIONS
+          default: '-k test_add_custom_host'
+      - string:
+          name: CLOUD_PROVIDER
+          default: AWS
+      - string:
+          name: DOCKER_INSTALLED
+          default: False
+      - string: 
+          name: AWS_SSH_KEY_NAME
+          default: jenkins-rke-validation.pem
+      - string:
+          name: AWS_CICD_INSTANCE_TAG
+          default: rke-automation
+      - string:
+          name: RANCHER_HOST_COUNT
+          default: '1'
+      - string:
+          name: RANCHER_AGENT_REG_CMD
+      - string:
+          name: RANCHER_HOST_NAME
+          default: testsa
+      - string:
+          name: AWS_INSTANCE_TYPE
+          default: t2.medium

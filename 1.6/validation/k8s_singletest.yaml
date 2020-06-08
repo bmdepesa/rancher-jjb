@@ -1,0 +1,55 @@
+- job:
+    name: migrate-k8s_single_test_case
+    description: 'Do not edit this job manually! '
+    project-type: freestyle
+    concurrent: true
+    properties: 
+      - build-discarder:
+          num-to-keep: 10
+    scm:
+      - git:
+          url: https://github.com/rancher/validation-tests
+          branches:
+            - '*/master'
+          wipe-workspace: true
+    parameters:
+      - string:
+          name: CATTLE_TEST_URL
+      - string:
+          name: RANCHER_ORCHESTRATION
+          default: k8s
+      - string:
+          name: DIGITALOCEAN_KEY
+      - string: 
+          name: KUBECTL_VERSION
+          default: v1.7.0
+      - string: 
+          name: LIBRARY_CATALOG_URL
+          default: https://git.rancher.io/rancher-catalog.git
+      - string: 
+          name: LIBRARY_CATALOG_BRANCH
+          default: master
+      - string:
+          name: K8S_DEPLOY
+          default: False
+      - string:
+          name: OVERRIDE_CATALOG
+          default: False
+      - string:
+          name: RANCHER_DOCKER_VERSION
+          default: '1.12'
+      - string:
+          name: ACCESS_KEY
+      - string:
+          name: SECRET_KEY
+      - string:
+          name: PROJECT_ID
+      - string:
+          name: TEST_CASE
+    builders:
+      - shell: "py.test -s --junit-xml=results.xml -k $TEST_CASE tests/v2_validation/cattlevalidationtest/core/test_k8*"
+    publishers:
+      - junit:
+          results: results.xml
+          health-scale-factor: 1.0
+          allow-empty-results: true

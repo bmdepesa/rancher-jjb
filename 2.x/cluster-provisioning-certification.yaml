@@ -1,0 +1,194 @@
+- defaults:
+    name: global
+    description: 'Do not edit this job manually! '
+    project-type: pipeline
+    properties: 
+      - inject:
+          keep-system-variables: true
+          keep-build-variables: true
+      - build-discarder:
+          num-to-keep: 10
+    pipeline-scm:
+      scm:
+        - git:
+            url: https://github.com/rancher/rancher
+            branches: 
+              - master
+      script-path: tests/validation/tests/v3_api/Jenkinsfile
+      lightweight-checkout: true
+
+- job:
+    name: rancher-v3_manual_cluster_provisioning
+    description: 'Cluster Certification Matrix  - do not edit this job manually! '
+    pipeline-scm:
+      scm:
+        - git:
+            url: https://github.com/rancher/rancher
+            branches: 
+              - master
+      script-path: tests/validation/tests/v3_api/Jenkinsfile_provisioning_tests
+      lightweight-checkout: true
+    parameters:
+      - string:
+          name: BRANCH
+          default: master
+      - string:
+          name: CLOUD_PROVIDER
+          default: AWS
+      - string:
+          name: AWS_SSH_KEY_NAME
+          default: jenkins-rke-validation.pem
+      - string:
+          name: AWS_SECURITY_GROUPS
+          default: sg-0e753fd5550206e55
+      - string:
+          name: AWS_INSTANCE_TYPE
+          default: t3.large
+      - string:
+          name: RANCHER_HOST_NAME
+          default: -ontag-prov
+      - string:
+          name: RANCHER_AUTO_DEPLOY_CUSTOM_CLUSTER
+          default: False
+      - string:
+          name: DOCKER_INSTALLED
+          default: False
+      - string:
+          name: RANCHER_DELETE_SERVER
+          default: True
+      - string:
+          name: RANCHER_DELETE_DELAY
+          default: 0
+      - string: 
+          name: RANCHER_VERSION
+          default: master-head
+      - string:
+          name: DEBUG
+          default: true
+
+- job:
+    name: rancher-v3_ec2_provisioning
+    parameters:
+      - string:
+          name: PYTEST_OPTIONS
+          default: -k test_rke_ec2
+      - string:
+          name: AWS_SSH_KEY_NAME
+          default: jenkins-rke-validation.pem
+      - string: 
+          name: AWS_CICID_INSTANCE_TAG
+          default: rke-automation
+      - string:
+          name: AWS_REGION
+          default: us-east-2
+      - string:
+          name: AWS_SUBNET
+          default: subnet-ee8cac86
+      - string:
+          name: AWS_VPC
+          default: vpc-bfccf4d7
+      - string:
+          name: AWS_SG
+          default: open-all
+      - string:
+          name: AWS_ZONE
+          default: a
+      - string:
+          name: AWS_IAM_PROFILE
+          default: RancherK8SUnrestrictedCloudProviderRoleUS
+      - string:
+          name: BRANCH
+          default: master
+      - string:
+          name: DEBUG
+          default: True
+      - string:
+          name: DOCKER_INSTALLED
+          default: False
+      - string: 
+          name: CATTLE_TEST_URL
+      - string:
+          name: ADMIN_TOKEN
+      - string:
+          name: USER_TOKEN
+      - string:
+          name: RANCHER_CLEANUP_CLUSTER
+          default: True
+
+- job:
+    name: rancher-v3_do_provisioning
+    parameters:
+      - string:
+          name: PYTEST_OPTIONS
+          default: -k test_rke_do
+      - string:
+          name: BRANCH
+          default: master
+      - string:
+          name: DEBUG
+          default: True
+      - string: 
+          name: CATTLE_TEST_URL
+      - string:
+          name: ADMIN_TOKEN
+      - string:
+          name: USER_TOKEN
+      - string:
+          name: RANCHER_CLEANUP_CLUSTER
+          default: True
+
+- job:
+    name: rancher-v3_custom_provisioning
+    parameters:
+      - string:
+          name: PYTEST_OPTIONS
+          default: -k test_rke_custom_host
+      - string:
+          name: AWS_SSH_KEY_NAME
+          default: jenkins-rke-validation.pem
+      - string: 
+          name: AWS_CICID_INSTANCE_TAG
+          default: rke-automation
+      - string:
+          name: AWS_SECURITY_GROUPS
+          default: sg-0e753fd5550206e55
+      - string:
+          name: BRANCH
+          default: master
+      - string:
+          name: DEBUG
+          default: True
+      - string:
+          name: DOCKER_INSTALLED
+          default: False
+      - string: 
+          name: CATTLE_TEST_URL
+      - string:
+          name: ADMIN_TOKEN
+      - string:
+          name: USER_TOKEN
+      - string:
+          name: RANCHER_CLEANUP_CLUSTER
+          default: True
+
+- job:
+    name: rancher-v3_az_provisioning
+    parameters:
+      - string:
+          name: PYTEST_OPTIONS
+          default: -k test_rke_az
+      - string:
+          name: BRANCH
+          default: master
+      - string:
+          name: DEBUG
+          default: True
+      - string: 
+          name: CATTLE_TEST_URL
+      - string:
+          name: ADMIN_TOKEN
+      - string:
+          name: USER_TOKEN
+      - string:
+          name: RANCHER_CLEANUP_CLUSTER
+          default: True

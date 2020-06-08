@@ -1,0 +1,58 @@
+- job:
+    name: rancher-v3_needs_cluster
+    description: 'Do not edit this job manually! '
+    project-type: pipeline
+    concurrent: true
+    properties: 
+      - inject:
+          keep-system-variables: true
+          keep-build-variables: true
+      - build-discarder:
+          num-to-keep: 10
+    pipeline-scm:
+      scm:
+        - git:
+            url: https://github.com/rancher/rancher
+            branches: 
+              - master
+      script-path: tests/validation/tests/v3_api/Jenkinsfile
+      lightweight-checkout: true
+    parameters:
+      - string:
+          name: BRANCH
+          default: master
+      - string:
+          name: DEBUG
+          default: True
+      - string: 
+          name: PYTEST_OPTIONS
+          default: '-k "test_bkp or test_wl or test_dns_record or test_rbac or test_connectivity or test_ingress or test_secrets or test_registry or test_service_discovery"'
+      - string:
+          name: CATTLE_TEST_URL
+      - string:
+          name: ADMIN_TOKEN
+      - string:
+          name: USER_TOKEN
+      - string:
+          name: RANCHER_CLUSTER_NAME
+      - string:
+          name: RANCHER_CHECK_FOR_LB
+          default: False
+      - string:
+          name: RANCHER_ENABLE_HOST_NODE_PORT_TESTS
+          default: True
+      - string:
+          name: RANCHER_SKIP_INGRESS
+          default: False
+      - string:
+          name: RANCHER_PROJECT_ISOLATION
+          default: disabled
+      - string: 
+          name: RANCHER_REGISTRY
+          default: quay.io
+      - string:
+          name: RANCHER_TEST_CLIENT_IMAGE
+          default: quay.io/soumyalj/testubuntu
+      - string:
+          name: AWS_SSH_KEY_NAME
+          default: jenkins-rke-validation.pem

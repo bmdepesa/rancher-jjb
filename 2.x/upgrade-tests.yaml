@@ -1,0 +1,56 @@
+- job:
+    name: rancher-v3_upgrade_tests
+    description: 'Do not edit this job manually! Updated from yaml. '
+    project-type: pipeline
+    concurrent: true
+    properties: 
+      - inject:
+          keep-system-variables: true
+          keep-build-variables: true
+      - build-discarder:
+          num-to-keep: 10
+    pipeline-scm:
+      scm:
+        - git:
+            url: https://github.com/rancher/rancher
+            branches: 
+              - master
+      script-path: tests/validation/tests/v3_api/Jenkinsfile
+      lightweight-checkout: true
+    parameters:
+      - string:
+          name: BRANCH
+          default: master
+          description: |
+            use "master" when testing Rancher v2.2 and plus
+            use "release/v2.1" when testing Rancher v2.0 and v2.1
+      - string:
+          name: DEBUG
+          default: True
+      - string: 
+          name: PYTEST_OPTIONS
+          default: '-k test_upgrade'
+      - string:
+          name: CATTLE_TEST_URL
+      - string:
+          name: ADMIN_TOKEN
+      - string:
+          name: USER_TOKEN
+      - string:
+          name: RANCHER_CLUSTER_NAME
+      - choice:
+          name: RANCHER_UPGRADE_CHECK
+          choices:
+            - preupgrade
+            - postupgrade
+      - string:
+          name: RANCHER_VALIDATE_RESOURCES_PREFIX
+          default: mystep1
+      - string:
+          name: RANCHER_CREATE_RESOURCES_PREFIX
+          default: mystep1
+      - choice:
+          name: RANCHER_INGRESS_CHECK
+          choices:
+            - 'True'
+            - 'False'

@@ -1,0 +1,115 @@
+- job:
+    name: migrate-rancher-v3_single_click_multi_cluster_upgrade
+    description: 'Do not edit this job manually! '
+    project-type: pipeline
+    concurrent: true
+    properties: 
+      - inject:
+          keep-system-variables: true
+          keep-build-variables: true
+      - build-discarder:
+          num-to-keep: 10
+    pipeline-scm:
+      scm:
+        - git:
+            url: https://github.com/rancher/rancher
+            branches: 
+              - master
+      script-path: tests/validation/tests/v3_api/scripts/pipeline/Jenkinsfile_single_upgrade_multiple
+      lightweight-checkout: true
+    parameters:
+      - text:
+          name: CLUSTER_TYPES
+          description: |
+            true/false
+            Allowed options: run_ec2, run_do, run_az, run_custom
+            At least one must be enabled
+          default: |
+            run_ec2='true'
+            run_do='false'
+            run_az='false'
+            run_custom='false'
+      - choice:
+          name: CLUSTER_PROFILE
+          description: |
+            1 = single node, all roles
+            2 = 1 etcd, 1 controlplane, 3 workers
+            3 = 3 etcd, 2 controlplane, 3 workers
+          choices:
+            - '1'
+            - '2'
+            - '3'
+      - string:
+          name: RANCHER_SERVER_VERSION
+          description: |
+            * REQUIRED * 
+            The initial Rancher server version
+      - string:
+          name: RANCHER_SERVER_VERSION_UPGRADE
+          description: |
+            * REQUIRED * 
+            The Rancher version to upgrade to
+      - text:
+          name: K8S_UPGRADE_VERSIONS
+          description: Pre and post upgrade k8s versions. A blank entry will use the defaults
+          default: |
+            k8s_pre_ec2=''
+            k8s_post_ec2=''
+
+            k8s_pre_do=''
+            k8s_post_do=''
+
+            k8s_pre_az=''
+            k8s_post_az=''
+
+            k8s_pre_custom=''
+            k8s_post_custom=''
+      - string:
+          name: PREUPGRADE_BRANCH
+          description: |
+            * REQUIRED *
+            The branch for test code to use pre-upgrade
+            v2.1.x = 'release/v2.1'
+            v2.2.x+ = 'master'
+      - string:
+          name: POSTUPGRADE_BRANCH
+          description: |
+            * REQUIRED *
+            The branch for test code to use post-upgrade
+            v2.1.x = 'release/v2.1'
+            v2.2.x+ = 'master'
+      - string:
+          name: RANCHER_DELETE_SERVER
+          default: 'False'
+          description: 'Deletes Rancher server if all tests pass. If any tests fail, the server will remain.'
+      - text:
+          name: EXTRA_VARS
+          description: 'Additional environment variables to pass to the tests. These can be overridden as needed.'
+          default: |
+            RANCHER_HOST_NAME='auto-single-click-upgrade'
+            RANCHER_UPGRADE_IMAGE='rancher/rancher'
+            RANCHER_CLUSTER_NAME='autocluster'
+            POSTUPGRADE_SLEEP=2
+
+            RANCHER_AUTO_DEPLOY_CUSTOM_CLUSTER='False'
+            CLOUD_PROVIDER='AWS'
+            RANCHER_CLEANUP_CLUSTER='False'
+
+            RANCHER_TEST_CLIENT_IMAGE='quay.io/soumyalj/testubuntu'
+            RANCHER_REGISTRY='quay.io'
+
+            RANCHER_SSH_USER='ubuntu'
+            DOCKER_INSTALLED='false'
+
+            AWS_INSTANCE_TYPE='t3.large'
+            AWS_SSH_KEY_NAME='jenkins-rke-validation.pem'
+            AWS_SECURITY_GROUPS='sg-0e753fd5550206e55'
+            AWS_CICD_INSTANCE_TAG='rke-automation'
+            AWS_REGION='us-east-2'
+            AWS_SUBNET='subnet-ee8cac86'
+            AWS_VPC='vpc-bfccf4d7'
+            AWS_SG='open-all'
+            AWS_ZONE='a'
+            AWS_IAM_PROFILE='RancherK8SUnrestrictedCloudProviderRoleUS'
+
+            DELETE_SERVER_OVERRIDE='False'

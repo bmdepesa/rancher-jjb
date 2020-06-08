@@ -1,0 +1,39 @@
+- job:
+    name: migrate-cattle_validation_single_test_case
+    description: 'Do not edit this job manually! '
+    project-type: freestyle
+    concurrent: true
+    properties: 
+      - build-discarder:
+          num-to-keep: 10
+    scm:
+      - git:
+          url: https://github.com/rancher/validation-tests
+          branches:
+            - '*/master'
+          wipe-workspace: true
+    parameters:
+      - string:
+          name: CATTLE_TEST_URL
+      - string: 
+          name: CATTLE_RESTART_SLEEP_INTERVAL
+          default: '10'
+      - string:
+          name: PROJECT_ID
+          default: '1a5'
+      - string:
+          name: ACCESS_KEY
+      - string:
+          name: SECRET_KEY
+      - string:
+          name: PROJECT_NAME
+          default: Default
+      - string:
+          name: TEST_CASE
+    builders:
+      - shell: "py.test -s -v --junit-xml=results.xml -k $TEST_CASE tests/v2_validation/cattlevalidationtest"
+    publishers:
+      - junit:
+          results: results.xml
+          health-scale-factor: 1.0
+          allow-empty-results: true

@@ -1,0 +1,99 @@
+- job:
+    name: migrate-on-tag - k8s - docker-17.03.x - RancherOS
+    description: 'Do not edit this job manually! '
+    project-type: pipeline
+    properties: 
+      - inject:
+          keep-system-variables: true
+          keep-build-variables: true
+      - build-discarder:
+          num-to-keep: 10
+    pipeline-scm:
+      scm:
+        - git:
+            url: https://github.com/bmdepesa/jenkins-rancher-validations
+            branches: 
+              - pipeline-migration
+      script-path: Jenkinsfile
+      lightweight-checkout: true
+    triggers:
+      - dockerhub-notification:
+          referenced-image: true
+          repositories:
+            - 'rancher/server'
+    parameters:
+      - bool:
+          name: DEBUG
+          default: false
+      - string:
+          name: AWS_DEFAULT_REGION
+          default: us-east-2
+      - string:
+          name: AWS_PREFIX
+      - string:
+          name: AWS_SECURITY_GROUP_ID
+          default: sg-0e753fd5550206e55
+      - string:
+          name: AWS_SUBNET_ID
+          default: subnet-ee8cac86
+      - string:
+          name: AWS_TAGS
+          default: 'is_ci,true,ci,nathan-testing,owner,nrvale0'
+      - string:
+          name: AWS_VPC_ID
+          default: vpc-bfccf4d7
+      - string:
+          name: AWS_ZONE
+          default: a
+      - string:
+          name: RANCHER_AGENT_OPERATINGSYSTEM
+          default: rancheros-v1.4.2
+      - string:
+          name: RANCHER_SERVER_OPERATINGSYSTEM
+          default: rancheros-v1.4.2
+      - string:
+          name: RANCHER_DOCKER_VERSION
+          default: '17.03'
+      - choice:
+          name: RANCHER_ORCHESTRATION
+          choices:
+            - k8s
+            - cattle
+      - string:
+          name: CATTLE_CATALOG_BRANCH
+          default: qa
+      - string:
+          name: RANCHER_VERSION
+      - string:
+          name: RANCHER_SERVER_AWS_INSTANCE_TYPE
+          default: t2.medium
+      - string:
+          name: RANCHER_AGENT_AWS_INSTANCE_TYPE
+          default: t2.medium
+      - bool:
+          name: PIPELINE_PROVISION_STOP
+          default: false
+      - bool:
+          name: PIPELINE_DEPROVISION_STOP
+          default: false
+      - bool:
+          name: PIPELINE_SMOKE_TEST_ONLY
+          default: false
+      - string: 
+          name: AWS_INSTANCE_PROFILE
+          default: RancherK8SUnrestrictedCloudProviderRoleUS
+      - string:
+          name: SLACK_CHANNEL
+          default: '#ci_cd'
+      - string:
+          name: PIPELINE_DEPROVISION_DELAY_MINS
+          default: '1440'
+      - string:
+          name: PIPELINE_POST_SERVER_WAIT
+          default: '600'
+      - string:
+          name: KUBECTL_VERSION
+          default: 'v1.10.0'
+      - string:
+          name: RANCHER_AGENTS_COUNT
+          default: '3'

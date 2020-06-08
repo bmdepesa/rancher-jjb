@@ -1,0 +1,57 @@
+- job:
+    name: rancher-v3_custom_cluster_os_matrix
+    description: 'Do not edit this job manually! '
+    project-type: pipeline
+    properties: 
+      - inject:
+          keep-system-variables: true
+          keep-build-variables: true
+      - build-discarder:
+          num-to-keep: 10
+    pipeline-scm:
+      scm:
+        - git:
+            url: https://github.com/rancher/rancher
+            branches: 
+              - master
+      script-path: tests/validation/tests/v3_api/Jenkinsfile
+      lightweight-checkout: true
+    parameters:
+      - string:
+          name: BRANCH
+          default: master
+      - string:
+          name: DEBUG
+          default: True
+      - string: 
+          name: PYTEST_OPTIONS
+          default: -k test_rke_custom_host_3
+      - string:
+          name: CATTLE_TEST_URL
+      - string:
+          name: ADMIN_TOKEN
+      - string:
+          name: USER_TOKEN
+      - string:
+          name: AWS_SSH_KEY_NAME
+          default: jenkins-rke-validation.pem
+      - string: 
+          name: RANCHER_K8S_VERSION
+      - string:
+          name: RANCHER_CLEANUP_CLUSTER
+          default: False
+      - string:
+          name: RANCHER_HOST_NAME
+          default: testos-matrix
+      - string:
+          name: RANCHER_CLUSTER_NAME
+      - choice:
+          name: RANCHER_OS_DOCKER_VERSION
+          choices:
+            - rhel-7.6:native-113
+            - rancheros-v1.5.1:native
+            - rancheros-v1.5.3:native
+            - ubuntu-16.04:18.09
+            - ubuntu-18.04:18.09
+            - rhel-7.6:18.09
+            - suse-sles12-sp2:18061ce

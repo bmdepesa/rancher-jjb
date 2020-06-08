@@ -1,0 +1,125 @@
+- job:
+    name: migrate-magic_button
+    description: 'Do not edit this job manually! '
+    project-type: pipeline
+    properties: 
+      - inject:
+          keep-system-variables: true
+          keep-build-variables: true
+      - build-discarder:
+          num-to-keep: 10
+    pipeline-scm:
+      scm:
+        - git:
+            url: https://github.com/bmdepesa/jenkins-rancher-validations.git            
+            branches: 
+              - pipeline-migration
+      script-path: Jenkinsfile
+      lightweight-checkout: true
+    parameters:
+      - string:
+          name: AWS_DEFAULT_REGION
+          default: us-east-2
+      - string:
+          name: AWS_ZONE
+          default: a
+      - string:
+          name: AWS_VPC_ID
+          default: vpc-bfccf4d7
+      - string:
+          name: AWS_SUBNET_ID
+          default: subnet-ee8cac86
+      - string:
+          name: AWS_SECURITY_GROUP_ID
+          default: sg-0e753fd5550206e55
+      - string:
+          name: AWS_INSTANCE_PROFILE
+          default: RancherK8SUnrestrictedCloudProviderRoleUS
+      - string:
+          name: SLACK_TOKEN
+      - bool:
+          name: DEBUG
+          default: false
+          description: Throw the pipeline into debug/verbose mode.
+      - choice: 
+         name: RANCHER_SERVER_OPERATINGSYSTEM
+         choices:
+             - ubuntu-1604
+             - ubuntu-1404
+             - rhel-7.2
+             - rhel-7.3
+             - rhel-7.4
+             - rhel-7.5
+             - rhel-7.6
+             - rhel-7.7
+             - centos-7
+             - coreos-stable
+             - rancheros-v1.0.3
+             - rancheros-v1.1.3
+             - rancheros-v1.3.0
+             - rancheros-v1.4.1
+             - rancheros-v1.4.2
+             - rancheros-v1.5.0
+      - string:
+          name: RANCHER_SERVER_AWS_INSTANCE_TYPE
+          default: t2.medium
+      - choice: 
+          name: RANCHER_AGENT_OPERATINGSYSTEM
+          choices:
+              - ubuntu-1604
+              - ubuntu-1404
+              - rhel-7.2
+              - rhel-7.3
+              - rhel-7.4
+              - rhel-7.5
+              - rhel-7.6
+              - rhel-7.7
+              - centos-7
+              - coreos-stable
+              - rancheros-v1.0.3
+              - rancheros-v1.1.3
+              - rancheros-v1.3.0
+              - rancheros-v1.4.1
+              - rancheros-v1.4.2
+              - rancheros-v1.5.0
+      - string:
+          name: RANCHER_AGENT_AWS_INSTANCE_TYPE
+          default: t2.medium
+      - string: 
+          name: AWS_PREFIX
+          default: mb
+          description: All EC2 nodes will be spun with this prefix in their Name tag.
+      - string:
+          name: AWS_TAGS
+          default: is_ci,true,via,magic_button
+          description: All EC2 nodes and associated resources (EBS volumes, etc) will be spun with this minimal set of tags.
+      - string:
+          name: RANCHER_DOCKER_VERSION
+      - string:
+          name: RANCHER_VERSION
+      - choice:
+          name: RANCHER_ORCHESTRATION
+          choices:
+              - cattle
+              - k8s
+      - bool:
+          name: PIPELINE_PROVISION_STOP
+          default: true
+      - bool:
+          name: PIPELINE_DEPROVISION_STOP
+          default: false
+      - bool:
+          name: PIPELINE_SMOKE_TEST_ONLY
+          default: false
+      - string:
+          name: SLACK_CHANNEL
+          default: '#ci_cd'
+      - string:
+          name: RANCHER_DOCKER_NATIVE
+          default: 'false'
+      - string:
+          name: RANCHER_DOCKER_RHEL_SELINUX
+          default: 'false'
+      - string:
+          name: RANCHER_AGENTS_COUNT
+          default: '3'

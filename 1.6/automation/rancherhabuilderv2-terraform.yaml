@@ -1,0 +1,96 @@
+- job:
+    name: migrate-rancher_ha_builder_v2_terraform
+    description: 'Do not edit this job manually! '
+    project-type: pipeline
+    properties: 
+      - inject:
+          keep-system-variables: true
+          keep-build-variables: true
+      - build-discarder:
+          num-to-keep: 10
+    pipeline-scm:
+      scm:
+        - git:
+            url: https://github.com/galal-hussein/rancher-ha.git      
+            branches: 
+              - master
+      script-path: Jenkinsfile
+      wipe-workspace: true
+    parameters:
+      - string:
+          name: AWS_ACCESS_KEY_ID
+      - string:
+          name: AWS_SECRET_ACCESS_KEY
+      - string:
+          name: AWS_DEFAULT_REGION
+          default: us-east-2
+      - string:
+          name: AWS_S3_BUCKET
+          default: rancher-terraform-infra
+          description: "The bucket is used to store the infra stats file to be able to destroy the stacks later. Note: The script will attempt to create the bucket if it doesn't exist."
+      - text:
+          name: RANCHER_SSL_CERT
+      - text:
+          name: RANCHER_SSL_KEY
+      - text:
+          name: RANCHER_SSL_CHAIN
+      - string: 
+          name: AWS_ZONE_ID
+          default: ZN3ZU7USQS4U9
+      - string:
+          name: AWS_DOMAIN_NAME
+          default: '<add-your-subdomain-here>.rancher.space'
+      - string:
+          name: AWS_RDS_DB_PASSWORD
+          default: secretpassword
+      - string: 
+          name: AWS_RDS_INSTANCE_CLASS
+          default: db.t2.medium
+          description: 'RDS Instance Class.'
+      - string:
+          name: AWS_ENV_NAME
+      - choice: 
+          name: AWS_OPERATING_SYSTEM
+          choices:
+              - ubuntu-xenial-16.04
+              - ubuntu-trusty-14.04
+              - rhel-7.2
+              - rhel-7.3
+              - rhel-7.4
+              - rancheros-v0.8.1-hvm
+              - rancheros-v0.9.0-hvm
+              - rancheros-v1.0.3-hvm
+              - rancheros-v1.0.4-hvm
+      - string:
+          name: AWS_SCALE_MIN_SIZE
+          default: '3'
+      - string:
+          name: AWS_SCALE_MAX_SIZE
+          default: '3'
+      - string:
+          name: AWS_SCALE_DESIRED_SIZE
+          default: '3'
+      - bool:
+          name: RANCHER_RHEL_SELINUX
+          default: false
+      - bool:
+          name: RANCHER_DOCKER_RHEL_NATIVE
+          default: false
+      - string:
+          name: AWS_INSTANCE_TYPE
+          default: t2.small
+      - string:
+          name: AWS_KEY_NAME
+          description: 'The ssh key name that will be used to create instances.'
+      - string:
+          name: RANCHER_VERSION
+      - string:
+          name: RANCHER_DOCKER_VERSION
+          default: '1.12.6'
+          description: 'Add the full version for ROS systems (eg. 17.03.1-ce)'
+      - bool:
+          name: TERRAFORM_APPLY
+          default: true
+      - string:
+          name: SLACK_CHANNEL
+          default: '#ci_cd'

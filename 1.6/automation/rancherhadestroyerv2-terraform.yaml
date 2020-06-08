@@ -1,0 +1,38 @@
+- job:
+    name: migrate-rancher_ha_destroyer_v2_terraform
+    description: 'Do not edit this job manually! '
+    project-type: pipeline
+    properties: 
+      - inject:
+          keep-system-variables: true
+          keep-build-variables: true
+      - build-discarder:
+          num-to-keep: 10
+    pipeline-scm:
+      scm:
+        - git:
+            url: https://github.com/galal-hussein/rancher-ha.git      
+            branches: 
+              - master
+      script-path: Jenkinsfile-destroy
+      wipe-workspace: true
+    parameters:
+      - string:
+          name: AWS_ACCESS_KEY_ID
+      - string:
+          name: AWS_SECRET_ACCESS_KEY
+      - string:
+          name: AWS_DEFAULT_REGION
+          default: us-east-2
+      - string:
+          name: AWS_S3_BUCKET
+          default: rancher-terraform-infra
+          description: "The bucket is used to store the infra stats file to be able to destroy the stacks later. Note: The script will attempt to create the bucket if it doesn't exist."
+      - string:
+          name: AWS_ENV_NAME
+      - bool:
+          name: TERRAFORM_DESTROY
+          default: true
+      - string:
+          name: SLACK_CHANNEL
+          default: '#ci_cd'
